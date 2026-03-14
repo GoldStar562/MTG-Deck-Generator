@@ -9,12 +9,12 @@ import os
 time_date = datetime.datetime.now()
 random.seed(int(time_date.strftime('%Y%m%d%H%M%S%f')))
 deck_filename = f"deck_{time_date.strftime('%Y%m%d%H%M%S%f')}.txt"
-spacer_char = "x "
+spacer_char = " "
 MIN_LANDS = 30
 MAX_TRYS = 10000
 
 # Must equal 1.0
-DeckWeights = {
+DefaultDeckWeights = {
     "Basic": 0.50,
     "Land": 0.45,
     "Creature": 0.20,
@@ -47,6 +47,19 @@ if not(os.path.exists('AllPrintings.json')):
     
     while not(os.path.exists('AllPrintings.json')):
         time.sleep(1)
+
+if os.path.exists('DeckWeights.json'):
+    with open('DeckWeights.json', 'r') as f:
+        DeckWeights = json.load(f)
+else:
+    with open('DeckWeights.json', 'w') as f:
+        json.dump(DefaultDeckWeights, f, indent=4)
+    DeckWeights = DefaultDeckWeights
+
+if not(os.path.isdir("decks")):
+    os.mkdir("decks")
+    
+    
 
 
 print("loading json")
@@ -149,7 +162,7 @@ while total_cards < 100:
             break
 
 
-with open(deck_filename, "w") as f:
+with open("decks/" + deck_filename, "w") as f:
 
     for card in deck_list:
         f.write(f"1{spacer_char}{card}\n")
